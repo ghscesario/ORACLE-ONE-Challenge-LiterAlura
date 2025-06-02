@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,14 +26,15 @@ public class Autor{
     private int birth_year;
     private int death_year;
     @ManyToMany
+    @JoinTable(name = "livro_autor",
+        joinColumns = @JoinColumn(name = "autor_id"),
+        inverseJoinColumns = @JoinColumn(name = "livro_id"))
     private List<Livro> books;
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Nome:").append(name);
-        sb.append(", Ano nascimento:").append(birth_year);
-        sb.append(", Ano falescimento:").append(death_year);
+        sb.append(name);
         return sb.toString();
     }
 

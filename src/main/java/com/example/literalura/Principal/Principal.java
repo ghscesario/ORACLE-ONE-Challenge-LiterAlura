@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.literalura.Models.Autor;
 import com.example.literalura.Models.Livro;
 import com.example.literalura.Models.Results;
+import com.example.literalura.Repositories.AutorRepository;
 import com.example.literalura.Repositories.LivroRepository;
 import com.example.literalura.Services.ConverteDados;
 import com.example.literalura.Services.FazRequisicao;
@@ -17,9 +18,14 @@ import com.example.literalura.Services.FazRequisicao;
 public class Principal {
 
     @Autowired
-    private LivroRepository repositorio;
+    private LivroRepository repositorioLivro;
+    @Autowired
+    private AutorRepository repositorioAutor;
 
     Scanner leitura = new Scanner(System.in);
+    FazRequisicao req = new FazRequisicao();
+    ConverteDados conversor = new ConverteDados();
+
     @SuppressWarnings("FieldMayBeFinal")
     private String endereco="https://gutendex.com/books/?search=";
     
@@ -40,17 +46,27 @@ public class Principal {
         switch(opcao){
             case 1 -> {
                 System.out.println("Informe o livro que deseja buscar");
-                var livro = leitura.nextLine();
-                FazRequisicao req = new FazRequisicao();
+                var livro = leitura.nextLine().replaceAll(" ", "+");
                 var json = req.obterDados(endereco+livro);
-                ConverteDados conversor = new ConverteDados();
                 Results result = conversor.ObterDados(json, Results.class);
                 List<Livro> livro1 = result.getResults();
                 Livro livrao = livro1.get(0);
-                livrao.getAuthors();
-                repositorio.save(livrao);
-                List<Autor> autor = livrao.getAuthors();
-                System.out.println("Titulo: "+livrao.getTitle()+", Autores: "+autor);
+                repositorioLivro.save(livrao);
+                System.out.println(livrao);
+            }
+            case 2 ->{
+                List<Livro> livros = repositorioLivro.findAll();
+                livros.forEach(System.out::println);
+            }
+            case 3 ->{
+                List<Autor> autor = repositorioAutor.findAll();
+                autor.forEach(System.out::println);
+            }
+            case 4 ->{
+
+            }
+            case 5 ->{
+                
             }
             default -> System.out.println("Valor inválido");
         }

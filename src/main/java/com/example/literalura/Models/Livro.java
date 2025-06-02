@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +21,7 @@ public class Livro{
     private Long idbanco;
     @JsonAlias("id")
     private Long externalId;
-    @ManyToMany(mappedBy = "books" , cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "books" , cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<Autor> authors;
     private String title;
     private List<String> languages;
@@ -62,10 +63,23 @@ public class Livro{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Livro: ").append(title);
-        sb.append(", Autores: ").append(authors);
-        sb.append(", Idiomas: ").append(languages);
-        sb.append(", Numero de Downloads: ").append(download_count);
+        sb.append("\n");
+        sb.append("----------LIVRO----------").append("\n");
+        sb.append("Título: ").append(title).append("\n");
+        sb.append("Autor: ");
+        if (authors != null && !authors.isEmpty()) {
+            String nomesAutores = authors.stream()
+                .map(Autor::getName)
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("Desconhecido");
+            sb.append(nomesAutores);
+        } else {
+            sb.append("Desconhecido");
+        }
+        sb.append("\n");
+        sb.append("Idioma: ").append(languages).append("\n");
+        sb.append("Numero de Downloads: ").append(download_count).append("\n");
+        sb.append("-------------------------").append("\n");
         return sb.toString();
     }
 
