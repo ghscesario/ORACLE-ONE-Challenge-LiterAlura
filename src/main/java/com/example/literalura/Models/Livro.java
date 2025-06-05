@@ -1,18 +1,25 @@
 package com.example.literalura.Models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown=true)
 @Entity
 public class Livro{
@@ -21,10 +28,19 @@ public class Livro{
     private Long idbanco;
     @JsonAlias("id")
     private Long externalId;
-    @ManyToMany(mappedBy = "books" , cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    private List<Autor> authors;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+        name = "livro_autor",
+        joinColumns = @JoinColumn(name = "livro_id"),
+        inverseJoinColumns = @JoinColumn(name = "autor_id")
+    )
+    private List<Autor> authors = new ArrayList<>();
     private String title;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "languages")
     private List<String> languages;
+    
     private Long download_count;
 
 
